@@ -1,6 +1,5 @@
 package co.edu.javeriana.as.personapp.terminal.menu;
 
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +74,7 @@ public class MenuPrincipal {
 				estudioMenu.iniciarMenu(estudioInputAdapterCli, keyboard);
 				break;
 			default:
-				log.warn("La opción elegida no es válida.");
+				log.warn("La opcion elegida no es valida.");
 			}
 
 		} while (!isValid);
@@ -94,9 +93,9 @@ public class MenuPrincipal {
 	private int leerOpcion() {
 		try {
 			System.out.print("Ingrese una opción: ");
-			return keyboard.nextInt();
-		} catch (InputMismatchException e) {
-			log.warn("Solo se permiten números.");
+			return Integer.parseInt(keyboard.nextLine());
+		} catch (RuntimeException e) {
+			log.warn("Solo se permiten numeros.");
 			return leerOpcion();
 		}
 	}

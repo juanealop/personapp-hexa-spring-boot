@@ -119,6 +119,8 @@ public class EstudioInputAdapterRest {
 	public EstudioResponse editarEstudio(Integer personIdentification, Integer professionIdentification,
 			EstudioRequest request) {
 		try {
+			request.setPersonId(String.valueOf(personIdentification));
+			request.setProfessionId(String.valueOf(professionIdentification));
 			String database = setStudyOutputPortInjection(request.getDatabase());
 			Person person = resolvePerson(request.getPersonId());
 			Profession profession = resolveProfession(request.getProfessionId());

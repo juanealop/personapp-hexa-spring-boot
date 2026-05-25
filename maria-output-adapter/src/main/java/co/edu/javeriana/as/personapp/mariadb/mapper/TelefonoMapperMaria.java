@@ -1,19 +1,14 @@
 package co.edu.javeriana.as.personapp.mariadb.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import co.edu.javeriana.as.personapp.common.annotations.Mapper;
+import co.edu.javeriana.as.personapp.domain.Gender;
 import co.edu.javeriana.as.personapp.domain.Person;
 import co.edu.javeriana.as.personapp.domain.Phone;
 import co.edu.javeriana.as.personapp.mariadb.entity.PersonaEntity;
 import co.edu.javeriana.as.personapp.mariadb.entity.TelefonoEntity;
-import lombok.NonNull;
 
 @Mapper
 public class TelefonoMapperMaria {
-
-	@Autowired
-	private PersonaMapperMaria personaMapperMaria;
 
 	public TelefonoEntity fromDomainToAdapter(Phone phone) {
 		TelefonoEntity telefonoEntity = new TelefonoEntity();
@@ -23,8 +18,17 @@ public class TelefonoMapperMaria {
 		return telefonoEntity;
 	}
 
-	private PersonaEntity validateDuenio(@NonNull Person owner) {
-		return owner != null ? personaMapperMaria.fromDomainToAdapter(owner) : new PersonaEntity();
+	private PersonaEntity validateDuenio(Person owner) {
+		if (owner == null) {
+			return new PersonaEntity();
+		}
+		PersonaEntity personaEntity = new PersonaEntity();
+		personaEntity.setCc(owner.getIdentification());
+		personaEntity.setNombre(owner.getFirstName());
+		personaEntity.setApellido(owner.getLastName());
+		personaEntity.setGenero(mapGender(owner.getGender()));
+		personaEntity.setEdad(owner.getAge());
+		return personaEntity;
 	}
 
 	public Phone fromAdapterToDomain(TelefonoEntity telefonoEntity) {
@@ -35,6 +39,23 @@ public class TelefonoMapperMaria {
 	}
 
 	private Person validateOwner(PersonaEntity duenio) {
-		return duenio != null ? personaMapperMaria.fromAdapterToDomain(duenio) : null;
+		if (duenio == null) {
+			return null;
+		}
+		Person owner = new Person(
+				duenio.getCc(),
+				duenio.getNombre(),
+				duenio.getApellido(),
+				mapGender(duenio.getGenero()));
+		owner.updateAge(duenio.getEdad());
+		return owner;
+	}
+
+	private Character mapGender(Gender gender) {
+		return gender == Gender.FEMALE ? 'F' : gender == Gender.MALE ? 'M' : ' ';
+	}
+
+	private Gender mapGender(Character genero) {
+		return genero == 'F' ? Gender.FEMALE : genero == 'M' ? Gender.MALE : Gender.OTHER;
 	}
 }

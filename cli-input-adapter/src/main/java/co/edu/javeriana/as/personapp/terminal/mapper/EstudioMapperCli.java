@@ -1,6 +1,8 @@
 package co.edu.javeriana.as.personapp.terminal.mapper;
 
 import co.edu.javeriana.as.personapp.common.annotations.Mapper;
+import co.edu.javeriana.as.personapp.domain.Person;
+import co.edu.javeriana.as.personapp.domain.Profession;
 import co.edu.javeriana.as.personapp.domain.Study;
 import co.edu.javeriana.as.personapp.terminal.model.EstudioModelCli;
 
@@ -14,5 +16,12 @@ public class EstudioMapperCli {
 		estudioModelCli.setFechaGraduacion(study.getGraduationDate());
 		estudioModelCli.setUniversidad(study.getUniversityName());
 		return estudioModelCli;
+	}
+
+	public Study fromAdapterCliToDomain(EstudioModelCli estudioModelCli, Person person, Profession profession) {
+		Study study = new Study(person, profession);
+		study.registerGraduation(estudioModelCli.getFechaGraduacion());
+		study.updateUniversityName(estudioModelCli.getUniversidad());
+		return study;
 	}
 }

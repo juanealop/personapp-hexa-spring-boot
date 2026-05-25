@@ -103,6 +103,7 @@ public class TelefonoInputAdapterRest {
 
 	public TelefonoResponse editarTelefono(String number, TelefonoRequest request) {
 		try {
+			request.setNumber(number);
 			String database = setPhoneOutputPortInjection(request.getDatabase());
 			Person owner = resolveOwner(request.getOwnerId());
 			Phone phone = phoneInputPort.edit(number, telefonoMapperRest.fromAdapterToDomain(request, owner));

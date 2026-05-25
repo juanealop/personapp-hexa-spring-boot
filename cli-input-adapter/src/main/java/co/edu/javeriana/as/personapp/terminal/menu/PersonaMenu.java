@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import co.edu.javeriana.as.personapp.common.exceptions.InvalidOptionException;
 import co.edu.javeriana.as.personapp.terminal.adapter.PersonaInputAdapterCli;
+import co.edu.javeriana.as.personapp.terminal.model.PersonaModelCli;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -16,7 +17,10 @@ public class PersonaMenu {
 
 	private static final int OPCION_REGRESAR_MOTOR_PERSISTENCIA = 0;
 	private static final int OPCION_VER_TODO = 1;
-	// mas opciones
+	private static final int OPCION_CREAR = 2;
+	private static final int OPCION_BUSCAR_POR_ID = 3;
+	private static final int OPCION_EDITAR = 4;
+	private static final int OPCION_ELIMINAR = 5;
 
 	public void iniciarMenu(PersonaInputAdapterCli personaInputAdapterCli, Scanner keyboard) {
 		boolean isValid = false;
@@ -37,7 +41,7 @@ public class PersonaMenu {
 					menuOpciones(personaInputAdapterCli,keyboard);
 					break;
 				default:
-					log.warn("La opción elegida no es válida.");
+					log.warn("La opcion elegida no es valida.");
 				}
 			}  catch (InvalidOptionException e) {
 				log.warn(e.getMessage());
@@ -58,12 +62,27 @@ public class PersonaMenu {
 				case OPCION_VER_TODO:
 					personaInputAdapterCli.historial();					
 					break;
-				// mas opciones
+				case OPCION_CREAR:
+					personaInputAdapterCli.crear(leerPersona(keyboard, true));
+					break;
+				case OPCION_BUSCAR_POR_ID:
+					personaInputAdapterCli.buscar(leerEntero(keyboard, "Ingrese el id de la persona: "));
+					break;
+				case OPCION_EDITAR:
+					Integer idEditar = leerEntero(keyboard, "Ingrese el id de la persona a editar: ");
+					PersonaModelCli personaEditar = leerPersona(keyboard, false);
+					personaEditar.setCc(idEditar);
+					personaInputAdapterCli.editar(idEditar, personaEditar);
+					break;
+				case OPCION_ELIMINAR:
+					personaInputAdapterCli.eliminar(leerEntero(keyboard, "Ingrese el id de la persona a eliminar: "));
+					break;
 				default:
-					log.warn("La opción elegida no es válida.");
+					log.warn("La opcion elegida no es valida.");
 				}
-			} catch (InputMismatchException e) {
-				log.warn("Solo se permiten números.");
+			} catch (RuntimeException e) {
+				String detail = e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
+				log.warn("Error en operacion de personas: " + detail);
 			}
 		} while (!isValid);
 	}
@@ -71,7 +90,10 @@ public class PersonaMenu {
 	private void mostrarMenuOpciones() {
 		System.out.println("----------------------");
 		System.out.println(OPCION_VER_TODO + " para ver todas las personas");
-		// implementar otras opciones
+		System.out.println(OPCION_CREAR + " para crear una persona");
+		System.out.println(OPCION_BUSCAR_POR_ID + " para buscar una persona por id");
+		System.out.println(OPCION_EDITAR + " para editar una persona");
+		System.out.println(OPCION_ELIMINAR + " para eliminar una persona");
 		System.out.println(OPCION_REGRESAR_MOTOR_PERSISTENCIA + " para regresar");
 	}
 
@@ -85,11 +107,47 @@ public class PersonaMenu {
 	private int leerOpcion(Scanner keyboard) {
 		try {
 			System.out.print("Ingrese una opción: ");
-			return keyboard.nextInt();
-		} catch (InputMismatchException e) {
-			log.warn("Solo se permiten números.");
+			return Integer.parseInt(keyboard.nextLine());
+		} catch (RuntimeException e) {
+			log.warn("Solo se permiten numeros.");
 			return leerOpcion(keyboard);
 		}
+	}
+
+	private Integer leerEntero(Scanner keyboard, String mensaje) {
+		try {
+			System.out.print(mensaje);
+			return Integer.parseInt(keyboard.nextLine());
+		} catch (RuntimeException e) {
+			log.warn("Solo se permiten numeros.");
+			return leerEntero(keyboard, mensaje);
+		}
+	}
+
+	private PersonaModelCli leerPersona(Scanner keyboard, boolean includeId) {
+		PersonaModelCli personaModelCli = new PersonaModelCli();
+		if (includeId) {
+			personaModelCli.setCc(leerEntero(keyboard, "Ingrese cc: "));
+		}
+		System.out.print("Ingrese nombre: ");
+		personaModelCli.setNombre(keyboard.nextLine());
+		System.out.print("Ingrese apellido: ");
+		personaModelCli.setApellido(keyboard.nextLine());
+		System.out.print("Ingrese genero (M/F/OTHER): ");
+		personaModelCli.setGenero(keyboard.nextLine());
+		System.out.print("Ingrese edad (vacio para null): ");
+		String edad = keyboard.nextLine();
+		if (edad == null || edad.isBlank()) {
+			personaModelCli.setEdad(null);
+		} else {
+			try {
+				personaModelCli.setEdad(Integer.parseInt(edad));
+			} catch (RuntimeException e) {
+				log.warn("Edad invalida, se asigna null");
+				personaModelCli.setEdad(null);
+			}
+		}
+		return personaModelCli;
 	}
 
 }

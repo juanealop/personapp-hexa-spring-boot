@@ -93,6 +93,7 @@ public class PersonaInputAdapterRest {
 
 	public PersonaResponse editarPersona(Integer identification, PersonaRequest request) {
 		try {
+			request.setDni(String.valueOf(identification));
 			String database = setPersonOutputPortInjection(request.getDatabase());
 			Person person = personInputPort.edit(identification, personaMapperRest.fromAdapterToDomain(request));
 			return personaMapperRest.fromDomainToAdapterRest(person, database);

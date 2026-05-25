@@ -90,6 +90,7 @@ public class ProfesionInputAdapterRest {
 
 	public ProfesionResponse editarProfesion(Integer identification, ProfesionRequest request) {
 		try {
+			request.setId(String.valueOf(identification));
 			String database = setProfessionOutputPortInjection(request.getDatabase());
 			Profession profession = professionInputPort.edit(identification,
 					profesionMapperRest.fromAdapterToDomain(request));

@@ -8,5 +8,11 @@ import co.edu.javeriana.as.personapp.domain.Profession;
 @Port
 public interface ProfessionOutputPort {
 
+	Profession save(Profession profession);
+
+	Boolean delete(Integer identification);
+
 	List<Profession> find();
+
+	Profession findById(Integer identification);
 }

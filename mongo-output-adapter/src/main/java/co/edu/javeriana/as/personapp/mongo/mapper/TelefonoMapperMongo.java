@@ -28,14 +28,13 @@ public class TelefonoMapperMongo {
 	}
 
 	public Phone fromAdapterToDomain(TelefonoDocument telefonoDocument) {
-		Phone phone = new Phone();
-		phone.setNumber(telefonoDocument.getId());
-		phone.setCompany(telefonoDocument.getOper());
-		phone.setOwner(validateOwner(telefonoDocument.getPrimaryDuenio()));
-		return phone;
+		return new Phone(
+				telefonoDocument.getId(),
+				telefonoDocument.getOper(),
+				validateOwner(telefonoDocument.getPrimaryDuenio()));
 	}
 
-	private @NonNull Person validateOwner(PersonaDocument duenio) {
-		return duenio != null ? personaMapperMongo.fromAdapterToDomain(duenio) : new Person();
+	private Person validateOwner(PersonaDocument duenio) {
+		return duenio != null ? personaMapperMongo.fromAdapterToDomain(duenio) : null;
 	}
 }

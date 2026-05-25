@@ -23,9 +23,32 @@ public class PhoneOutputAdapterMongo implements PhoneOutputPort {
 	private TelefonoMapperMongo telefonoMapperMongo;
 
 	@Override
+	public Phone save(Phone phone) {
+		log.debug("Into save on Adapter MongoDB for phones");
+		return telefonoMapperMongo.fromAdapterToDomain(
+				telefonoRepositoryMongo.save(telefonoMapperMongo.fromDomainToAdapter(phone)));
+	}
+
+	@Override
+	public Boolean delete(String number) {
+		log.debug("Into delete on Adapter MongoDB for phones");
+		telefonoRepositoryMongo.deleteById(number);
+		return telefonoRepositoryMongo.findById(number).isEmpty();
+	}
+
+	@Override
 	public List<Phone> find() {
 		log.debug("Into find on Adapter MongoDB for phones");
 		return telefonoRepositoryMongo.findAll().stream().map(telefonoMapperMongo::fromAdapterToDomain)
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Phone findById(String number) {
+		log.debug("Into findById on Adapter MongoDB for phones");
+		if (telefonoRepositoryMongo.findById(number).isEmpty()) {
+			return null;
+		}
+		return telefonoMapperMongo.fromAdapterToDomain(telefonoRepositoryMongo.findById(number).get());
 	}
 }

@@ -23,9 +23,32 @@ public class ProfessionOutputAdapterMongo implements ProfessionOutputPort {
 	private ProfesionMapperMongo profesionMapperMongo;
 
 	@Override
+	public Profession save(Profession profession) {
+		log.debug("Into save on Adapter MongoDB for professions");
+		return profesionMapperMongo.fromAdapterToDomain(
+				profesionRepositoryMongo.save(profesionMapperMongo.fromDomainToAdapter(profession)));
+	}
+
+	@Override
+	public Boolean delete(Integer identification) {
+		log.debug("Into delete on Adapter MongoDB for professions");
+		profesionRepositoryMongo.deleteById(identification);
+		return profesionRepositoryMongo.findById(identification).isEmpty();
+	}
+
+	@Override
 	public List<Profession> find() {
 		log.debug("Into find on Adapter MongoDB for professions");
 		return profesionRepositoryMongo.findAll().stream().map(profesionMapperMongo::fromAdapterToDomain)
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Profession findById(Integer identification) {
+		log.debug("Into findById on Adapter MongoDB for professions");
+		if (profesionRepositoryMongo.findById(identification).isEmpty()) {
+			return null;
+		}
+		return profesionMapperMongo.fromAdapterToDomain(profesionRepositoryMongo.findById(identification).get());
 	}
 }

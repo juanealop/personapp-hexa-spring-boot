@@ -26,9 +26,32 @@ public class PhoneOutputAdapterMaria implements PhoneOutputPort {
 	private TelefonoMapperMaria telefonoMapperMaria;
 
 	@Override
+	public Phone save(Phone phone) {
+		log.debug("Into save on Adapter MariaDB for phones");
+		return telefonoMapperMaria.fromAdapterToDomain(
+				telefonoRepositoryMaria.save(telefonoMapperMaria.fromDomainToAdapter(phone)));
+	}
+
+	@Override
+	public Boolean delete(String number) {
+		log.debug("Into delete on Adapter MariaDB for phones");
+		telefonoRepositoryMaria.deleteById(number);
+		return telefonoRepositoryMaria.findById(number).isEmpty();
+	}
+
+	@Override
 	public List<Phone> find() {
 		log.debug("Into find on Adapter MariaDB for phones");
 		return telefonoRepositoryMaria.findAll().stream().map(telefonoMapperMaria::fromAdapterToDomain)
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Phone findById(String number) {
+		log.debug("Into findById on Adapter MariaDB for phones");
+		if (telefonoRepositoryMaria.findById(number).isEmpty()) {
+			return null;
+		}
+		return telefonoMapperMaria.fromAdapterToDomain(telefonoRepositoryMaria.findById(number).get());
 	}
 }

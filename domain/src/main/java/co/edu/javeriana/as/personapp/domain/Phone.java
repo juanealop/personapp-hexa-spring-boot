@@ -1,18 +1,39 @@
 package co.edu.javeriana.as.personapp.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import java.util.Objects;
 
-@Data
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Phone {
-	@NonNull
 	private String number;
-	@NonNull
 	private String company;
-	@NonNull
 	private Person owner;
+
+	public Phone(String number, String company, Person owner) {
+		this.number = requireText(number, "number is required");
+		this.company = requireText(company, "company is required");
+		this.owner = owner;
+	}
+
+	public void updateNumber(String number) {
+		this.number = requireText(number, "number is required");
+	}
+
+	public void updateCompany(String company) {
+		this.company = requireText(company, "company is required");
+	}
+
+	public void assignOwner(Person owner) {
+		this.owner = owner;
+	}
+
+	private String requireText(String value, String message) {
+		if (Objects.isNull(value) || value.isBlank()) {
+			throw new IllegalArgumentException(message);
+		}
+		return value;
+	}
 }

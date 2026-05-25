@@ -58,14 +58,14 @@ public class PersonaMapperMaria {
 	}
 
 	public Person fromAdapterToDomain(PersonaEntity personaEntity) {
-		Person person = new Person();
-		person.setIdentification(personaEntity.getCc());
-		person.setFirstName(personaEntity.getNombre());
-		person.setLastName(personaEntity.getApellido());
-		person.setGender(validateGender(personaEntity.getGenero()));
-		person.setAge(validateAge(personaEntity.getEdad()));
-		person.setStudies(validateStudies(personaEntity.getEstudios()));
-		person.setPhoneNumbers(validatePhones(personaEntity.getTelefonos()));
+		Person person = new Person(
+				personaEntity.getCc(),
+				personaEntity.getNombre(),
+				personaEntity.getApellido(),
+				validateGender(personaEntity.getGenero()));
+		person.updateAge(validateAge(personaEntity.getEdad()));
+		person.replaceStudies(validateStudies(personaEntity.getEstudios()));
+		person.replacePhoneNumbers(validatePhones(personaEntity.getTelefonos()));
 		return person;
 	}
 

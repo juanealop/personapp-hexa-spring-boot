@@ -28,12 +28,12 @@ public class PersonaMapperRest {
 	}
 
 	public Person fromAdapterToDomain(PersonaRequest request) {
-		Person person = new Person();
-		person.setIdentification(parseInteger(request.getDni()));
-		person.setFirstName(request.getFirstName());
-		person.setLastName(request.getLastName());
-		person.setAge(parseNullableInteger(request.getAge()));
-		person.setGender(parseGender(request.getSex()));
+		Person person = new Person(
+				parseInteger(request.getDni()),
+				request.getFirstName(),
+				request.getLastName(),
+				parseGender(request.getSex()));
+		person.updateAge(parseNullableInteger(request.getAge()));
 		return person;
 	}
 
